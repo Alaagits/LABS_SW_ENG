@@ -1,0 +1,9 @@
+B_Kernighan@mail.com  !a01011942
+hello@world.net  01041972^H
++first_error@this.row  passw0rd%
+hello 123456789
+password@error.now ~helloworld
+thisEmailIsToLong@wow0123456789wow0123456789wow0123456789.co.il  @1234Abcd
+thisEmailIsok@wow0123456789.co.il  @1234Abcd
+passwordTooShort@mail.ru 123
+passwordToolong@mail.ru 123456789ABcdefg
