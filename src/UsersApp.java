@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -19,16 +18,16 @@ public class UsersApp {
                 String line = scanner.nextLine();
 
                 // TODO 3: Split the line by whitespace
-                String[] parts = /* YOUR CODE */;
+                String[] parts = line.split("\\s+");
 
                 // TODO 4: Extract the username
-                String username = /* YOUR CODE */;
+                String username = parts[0];
 
                 // TODO 5: Extract the password
-                String password = /* YOUR CODE */;
+                String password =parts[1];
 
                 // TODO 6: Print both values
-
+                System.out.println(username + " " + password);
             }
 
             scanner.close();
