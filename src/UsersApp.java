@@ -3,7 +3,14 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class UsersApp {
+    private String Username;
+    private String Password;
 
+
+    // continue from here
+    public User(){
+
+    }
     public static void main(String[] args) {
 
         try {
