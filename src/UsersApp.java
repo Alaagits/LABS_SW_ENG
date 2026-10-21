@@ -3,38 +3,34 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class UsersApp {
-    private String Username;
-    private String Password;
 
-
-    // continue from here
-    public User(){
-
-    }
     public static void main(String[] args) {
-
         try {
-            // TODO 1: Open users.txt
             File file = new File("users.txt");
-
-            // TODO 2: Create the Scanner
             Scanner scanner = new Scanner(file);
 
             while (scanner.hasNextLine()) {
-
                 String line = scanner.nextLine();
 
-                // TODO 3: Split the line by whitespace
                 String[] parts = line.split("\\s+");
 
-                // TODO 4: Extract the username
                 String username = parts[0];
+                String password = parts[1];
 
-                // TODO 5: Extract the password
-                String password =parts[1];
 
-                // TODO 6: Print both values
-                System.out.println(username + " " + password);
+                User user = new User(username, password);
+
+                //testing
+                if (user.isUsernameLengthValid()) {
+                    System.out.println("Username length is valid");
+                } else {
+                    System.out.println("Username is too long");
+                }
+
+
+
+
+                System.out.println(user.getUsername() + " " + user.getPassword());
             }
 
             scanner.close();
@@ -43,4 +39,42 @@ public class UsersApp {
             System.out.println("File not found!");
         }
     }
+
+
+}
+
+
+// This is a SECOND class, in the same file.
+class User {
+
+    private String username;
+    private String password;
+
+    public User(String username, String password){
+        this.username = username;
+        this.password = password;
+
+    }
+    public String getUsername() {
+        return username;
+    }
+    public String getPassword() {
+        return password;
+    }
+
+
+
+    public boolean isUsernameLengthValid(){
+        int length = username.length();
+        if(length<=50){
+            return true;
+
+        }
+        else {
+            return false;
+        }
+
+    }
+
+
 }
