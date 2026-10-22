@@ -8,25 +8,35 @@ public class UsersApp {
     public static void main(String[] args) {
         ArrayList<User> users = new ArrayList<>();
 
-        try (Scanner scanner = new Scanner(new File("users.txt"))) {
+        // read users.txt if present, else stdin (for < redirection)
+        File file = new File("users.txt");
+        try (Scanner scanner = file.exists() ? new Scanner(file) : new Scanner(System.in)) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String trimmed = line.trim();
-                String[] parts = trimmed.isEmpty() ? new String[0] : trimmed.split("\\s+");
 
+                // skip blank lines
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+
+                String[] parts = trimmed.split("\\s+");
                 if (parts.length != 2) {
-                    System.out.println(line + " Please enter a valid Email as username");
+                    // errors go to stderr so out.txt has only valid users
+                    System.err.println(line + " Please enter a valid Email as username");
                     continue;
                 }
 
                 try {
                     users.add(new User(parts[0], parts[1]));
                 } catch (IllegalArgumentException e) {
-                    System.out.println(line + " " + e.getMessage());
+                    // stderr, not stdout
+                    System.err.println(line + " " + e.getMessage());
                 }
             }
         } catch (FileNotFoundException e) {
-            System.out.println("File not found: " + e.getMessage());
+            // stderr, not stdout
+            System.err.println("File not found: " + e.getMessage());
             return;
         }
 
@@ -38,13 +48,21 @@ public class UsersApp {
         }
     }
 }
+
 class User {
+    // limits as named constants instead of magic numbers
+    private static final int MAX_EMAIL_LENGTH = 50;
+    private static final int MIN_PASSWORD_LENGTH = 8;
+    private static final int MAX_PASSWORD_LENGTH = 12;
+    // allowed symbols, ^ included (per expected output)
+    private static final String PASSWORD_SYMBOLS = "!@#$%^&*()+";
+
     private final String username;
     private final String password;
 
     public User(String username, String password) {
         if (username == null || !isEmailFormatValid(username)) {
-            if (username != null && username.length() > 50) {
+            if (username != null && username.length() > MAX_EMAIL_LENGTH) {
                 throw new IllegalArgumentException(
                         "Username is too long, try something shorter");
             }
@@ -52,11 +70,11 @@ class User {
                     "Please enter a valid Email as username");
         }
 
-        if (password == null || password.length() < 8) {
+        if (password == null || password.length() < MIN_PASSWORD_LENGTH) {
             throw new IllegalArgumentException(
                     "Your password is too short, add more characters");
         }
-        if (password.length() > 12) {
+        if (password.length() > MAX_PASSWORD_LENGTH) {
             throw new IllegalArgumentException(
                     "Your password is too long, try a shorter one");
         }
@@ -77,7 +95,7 @@ class User {
     }
 
     private static boolean isEmailFormatValid(String email) {
-        if (email.length() > 50) {
+        if (email.length() > MAX_EMAIL_LENGTH) {
             return false;
         }
 
@@ -99,7 +117,8 @@ class User {
             }
         }
 
-        if (domain.isEmpty() || !isAsciiLetterOrDigit(domain.charAt(0))) {
+        // domain non-empty is already guaranteed by the dot check
+        if (!isAsciiLetterOrDigit(domain.charAt(0))) {
             return false;
         }
         for (int i = 0; i < domain.length(); i++) {
@@ -128,7 +147,7 @@ class User {
                 hasLetter = true;
             } else if (c >= '0' && c <= '9') {
                 hasDigit = true;
-            } else if ((c >= '!' && c <= '+') || c == '@') {
+            } else if (PASSWORD_SYMBOLS.indexOf(c) != -1) { // was ascii range '!'..'+'
                 hasSymbol = true;
             } else {
                 return false;
