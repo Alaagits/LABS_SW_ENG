@@ -5,19 +5,23 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="LoginController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="284.0" prefWidth="338.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="LoginController">
    <children>
-      <VBox layoutX="250.0" layoutY="82.0" prefHeight="200.0" prefWidth="100.0">
+      <VBox layoutX="61.0" layoutY="42.0" prefHeight="200.0" prefWidth="216.0">
          <children>
             <Label text="Username" />
             <TextField fx:id="usernameField" />
             <Label text="Password" />
             <PasswordField fx:id="passwordField" />
-            <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleLogin" text="Login" />
-            <Label fx:id="errorLabel" />
+            <Label fx:id="errorLabel" textAlignment="RIGHT" />
+            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="loginButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleLogin" text="Login" textAlignment="JUSTIFY" />
+               </children>
+            </HBox>
          </children>
       </VBox>
    </children>
