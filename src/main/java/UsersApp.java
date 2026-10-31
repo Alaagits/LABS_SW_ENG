@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 
+
+/**
+ * Reads Users.txt and returns the valid users.
+ * Invalid lines are printed to System.err with the reason and skipped.
+ */
+
+
 public class UsersApp {
 
     public static ArrayList<User> loadUsers() {
@@ -49,6 +56,9 @@ public class UsersApp {
         return users;
     }
 
+
+
+    // Lab 1 console version - prints the valid users sorted. Not used by the GUI.
 
     public static void main(String[] args) {
 

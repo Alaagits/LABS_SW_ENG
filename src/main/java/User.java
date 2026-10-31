@@ -1,3 +1,11 @@
+
+
+
+/**
+ * A user (email + password). The constructor validates both and throws
+ * IllegalArgumentException if something is wrong, so every User is valid.
+ */
+
 public class User {
     // limits as named constants instead of magic numbers
     private static final int MAX_EMAIL_LENGTH = 50;
