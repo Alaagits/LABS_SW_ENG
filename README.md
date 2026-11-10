@@ -24,9 +24,11 @@ requires the JavaFX dependencies to be configured by Maven import.
 
 ## Lab 3 starting point
 
-This setup aligns the build tools only. The threading and account
-lockout requirements have not been implemented yet. Once argument handling
-is added, the application can receive `n` and `t` through Maven with:
+The application validates `n` (maximum failed attempts) and `t` (block duration
+in seconds) before opening the login screen. Both must be positive integers.
+Missing or invalid arguments prompt for replacements in the console.
+The threading and account lockout requirements have not been implemented yet.
+Pass the arguments through Maven with:
 
 ```powershell
 mvn javafx:run "-Djavafx.args=3 30"

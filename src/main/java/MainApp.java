@@ -14,10 +14,14 @@ import java.util.ArrayList;
 public class MainApp extends Application {
 
     private ArrayList<User> users;
+    private int maxAttempts;
+    private int blockSeconds;
 
     // runs before start(), so the file is read once before the window opens
     @Override
     public void init() {
+        maxAttempts = Integer.parseInt(getParameters().getRaw().get(0));
+        blockSeconds = Integer.parseInt(getParameters().getRaw().get(1));
         users = UsersApp.loadUsers();
     }
 
