@@ -33,6 +33,10 @@ for `t` seconds, with a countdown in the login window. Unknown emails receive
 a generic error without tracking. Closing the window interrupts the workers
 and any active login or countdown task.
 
+Use **Run Concurrency Test** on the login screen to start 20 threads that each
+record 499 failures for the same test email. The result shows the total and
+whether the account locked on the 10,000th failure.
+
 Pass the arguments through Maven with:
 
 ```powershell

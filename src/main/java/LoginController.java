@@ -1,6 +1,8 @@
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -27,12 +29,16 @@ public class LoginController {
     private Button loginButton;
 
     @FXML
+    private Button experimentButton;
+
+    @FXML
     private Label errorLabel; // error is shown here instead of a popup
 
     private List<User> users = new ArrayList<>();
     private AttemptTracker tracker;
     private Thread loginThread;
     private Thread countdownThread;
+    private Thread experimentThread;
     private boolean closed;
 
     /** Called from MainApp after the file is read. */
@@ -56,6 +62,31 @@ public class LoginController {
         loginThread = new Thread(new LoginTask(username, password, users, tracker,
                 result -> displayResult(username, result)), "LoginTask");
         loginThread.start();
+    }
+
+    @FXML
+    private void handleExperiment() {
+        setBusy(true);
+        experimentThread = new Thread(() -> {
+            try {
+                String result = ConcurrencyExperiment.run();
+                System.out.println(result);
+                Platform.runLater(() -> {
+                    if (!closed) {
+                        setBusy(false);
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(experimentButton.getScene().getWindow());
+                        alert.setTitle("Concurrency Test");
+                        alert.setHeaderText("Concurrency test results");
+                        alert.setContentText(result);
+                        alert.show();
+                    }
+                });
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }, "ConcurrencyExperiment");
+        experimentThread.start();
     }
 
     private void displayResult(String email, LoginResult result) {
@@ -97,6 +128,7 @@ public class LoginController {
         usernameField.setDisable(busy);
         passwordField.setDisable(busy);
         loginButton.setDisable(busy);
+        experimentButton.setDisable(busy);
     }
 
     public void shutdown() {
@@ -106,6 +138,9 @@ public class LoginController {
         }
         if (countdownThread != null) {
             countdownThread.interrupt();
+        }
+        if (experimentThread != null) {
+            experimentThread.interrupt();
         }
     }
 

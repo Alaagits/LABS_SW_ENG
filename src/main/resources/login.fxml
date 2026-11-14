@@ -28,5 +28,6 @@
       <!-- defaultButton: Enter also logs in -->
       <Button fx:id="loginButton" defaultButton="true" mnemonicParsing="false"
               onAction="#handleLogin" text="Login" />
+      <Button fx:id="experimentButton" onAction="#handleExperiment" text="Run Concurrency Test" />
    </children>
 </VBox>
