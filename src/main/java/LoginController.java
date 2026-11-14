@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * Controller for login.fxml.
- * Checks the entered username/password against the users loaded from the file.
+ * Starts background login work and displays its result.
  */
 public class LoginController {
 
@@ -30,10 +30,15 @@ public class LoginController {
     private Label errorLabel; // error is shown here instead of a popup
 
     private List<User> users = new ArrayList<>();
+    private AttemptTracker tracker;
+    private Thread loginThread;
+    private Thread countdownThread;
+    private boolean closed;
 
     /** Called from MainApp after the file is read. */
-    public void setUsers(List<User> users) {
+    public void configure(List<User> users, AttemptTracker tracker) {
         this.users = users;
+        this.tracker = tracker;
     }
 
     public void showError(String message) {
@@ -46,25 +51,62 @@ public class LoginController {
         String username = usernameField.getText().trim();
         String password = passwordField.getText();
 
-        User user = findUser(username, password);
+        setBusy(true);
+        showError("");
+        loginThread = new Thread(new LoginTask(username, password, users, tracker,
+                result -> displayResult(username, result)), "LoginTask");
+        loginThread.start();
+    }
 
-        if (user != null) {
-            showWelcomeScreen(user);
+    private void displayResult(String email, LoginResult result) {
+        if (closed) {
+            return;
+        }
+        passwordField.clear();
+        if (result.getStatus() == LoginResult.Status.BLOCKED) {
+            showBlocked(result.getSecondsRemaining());
+            countdownThread = new Thread(new CountdownTask(tracker, email,
+                    this::showBlocked, () -> {
+                        if (!closed) {
+                            showError("");
+                            setBusy(false);
+                        }
+                    }), "CountdownTask");
+            countdownThread.start();
         } else {
-            showError("user or password do not match");
-            passwordField.clear();
+            setBusy(false);
+            if (result.getStatus() == LoginResult.Status.SUCCESS) {
+                showWelcomeScreen(result.getUser());
+            } else {
+                String message = "user or password do not match";
+                if (result.getAttemptsRemaining() >= 0) {
+                    message += ". Attempts remaining: " + result.getAttemptsRemaining();
+                }
+                showError(message);
+            }
         }
     }
 
-    // returns null if no user matches both username and password
-    private User findUser(String username, String password) {
-        for (User user : users) {
-            if (user.getUsername().equals(username)
-                    && user.getPassword().equals(password)) {
-                return user;
-            }
+    private void showBlocked(long seconds) {
+        if (!closed) {
+            showError("Account locked. " + seconds + " seconds remaining.");
         }
-        return null;
+    }
+
+    private void setBusy(boolean busy) {
+        usernameField.setDisable(busy);
+        passwordField.setDisable(busy);
+        loginButton.setDisable(busy);
+    }
+
+    public void shutdown() {
+        closed = true;
+        if (loginThread != null) {
+            loginThread.interrupt();
+        }
+        if (countdownThread != null) {
+            countdownThread.interrupt();
+        }
     }
 
     // switch the window to the welcome screen

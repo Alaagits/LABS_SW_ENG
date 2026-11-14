@@ -27,7 +27,12 @@ requires the JavaFX dependencies to be configured by Maven import.
 The application validates `n` (maximum failed attempts) and `t` (block duration
 in seconds) before opening the login screen. Both must be positive integers.
 Missing or invalid arguments prompt for replacements in the console.
-The threading and account lockout requirements have not been implemented yet.
+Login attempts run in background threads. Two daemon workers process failed
+attempts through a blocking queue. A known email is locked after `n` failures
+for `t` seconds, with a countdown in the login window. Unknown emails receive
+a generic error without tracking. Closing the window interrupts the workers
+and any active login or countdown task.
+
 Pass the arguments through Maven with:
 
 ```powershell

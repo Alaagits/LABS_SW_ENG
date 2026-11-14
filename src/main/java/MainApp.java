@@ -16,6 +16,8 @@ public class MainApp extends Application {
     private ArrayList<User> users;
     private int maxAttempts;
     private int blockSeconds;
+    private AttemptTracker tracker;
+    private LoginController controller;
 
     // runs before start(), so the file is read once before the window opens
     @Override
@@ -23,6 +25,7 @@ public class MainApp extends Application {
         maxAttempts = Integer.parseInt(getParameters().getRaw().get(0));
         blockSeconds = Integer.parseInt(getParameters().getRaw().get(1));
         users = UsersApp.loadUsers();
+        tracker = new AttemptTracker(maxAttempts, blockSeconds);
     }
 
     @Override
@@ -31,8 +34,8 @@ public class MainApp extends Application {
         Scene scene = new Scene(loader.load());
 
         // pass the users to the login controller
-        LoginController controller = loader.getController();
-        controller.setUsers(users);
+        controller = loader.getController();
+        controller.configure(users, tracker);
 
         if (users.isEmpty()) {
             controller.showError("No valid users loaded - check Users.txt");
@@ -44,5 +47,15 @@ public class MainApp extends Application {
         stage.setTitle("GCM Login");
         stage.setScene(scene);
         stage.show();
+    }
+
+    @Override
+    public void stop() {
+        if (controller != null) {
+            controller.shutdown();
+        }
+        if (tracker != null) {
+            tracker.shutdown();
+        }
     }
 }
